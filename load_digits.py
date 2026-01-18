@@ -1,40 +1,51 @@
 from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
 
-# 1. Load the dataset
-digits = load_digits()
+dataset = load_digits()
 
+print(dataset.data)
+print(dataset.target)
+print(dataset.data.shape)
+print(dataset.images.shape)
+
+datalength = len(dataset.images)
+print(datalength)
+n = 7
 plt.gray()
-plt.matshow(digits.images[9])
-plt.title(f"Digit: {digits.target[0]}")
+plt.matshow(dataset.images[n])
 plt.show()
 
-# Features (pixel values)
-X = digits.data
+X = dataset.images.reshape((len(dataset.images), -1))
+y = dataset.target
 
-# Labels (which digit it is)
-y = digits.target
-print(digits.target)
-
-# 2. Train-test split
+from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
+    X, y, test_size=0.25, random_state=42
 )
 
-# 3. Create and train the model
-model = LogisticRegression(max_iter=5000)
+print(X_train.shape)
+print(X_test.shape)
+
+from sklearn import svm
+model = svm.SVC(kernel='linear')
+
 model.fit(X_train, y_train)
 
-# 4. Predict
 y_pred = model.predict(X_test)
 
-# 5. Evaluate accuracy
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
-# 6. Predict a single digit
-print("Prediction for first test image:", model.predict([X_test[5]]))
+acc = accuracy_score(y_test, y_pred)
+print("Accuracy: {:.2f}%".format(acc * 100))
+
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:")
+print(cm)
+
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+n = 118
+plt.matshow(dataset.images[n])
+plt.show()
